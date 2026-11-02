@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#02030f">
+<title>OXY.GEN — OXYnews</title>
+<style>
+:root{--bg:#02030f;--card:#0a1030;--line:#1a2552;--tx:#e8ecff;--mut:#7f8ab5;--ac:#5b8cff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.w{max-width:760px;margin:0 auto;padding:14px}
+header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.logo{font:600 22px Georgia,'Times New Roman',serif;letter-spacing:.06em}
+.logo small{display:block;font:12px system-ui;color:var(--mut);letter-spacing:.02em}
+.sp{flex:1}
+button,input{font:inherit;color:var(--tx)}
+.ib{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 11px;cursor:pointer}
+.ib.on{border-color:var(--ac);color:var(--ac)}
+.s{display:flex;gap:8px;margin-bottom:10px}
+.s input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;outline:none}
+.s input:focus{border-color:var(--ac)}
+.go{background:var(--ac);border:0;border-radius:12px;padding:0 18px;font-weight:600;color:#fff;cursor:pointer}
+.lb{font-size:12px;color:var(--mut);margin:10px 0 5px}
+.ch{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+#st{color:var(--mut);font-size:13px;margin:14px 0 8px;min-height:18px}
+.c{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px;text-decoration:none;color:inherit}
+.c:active{border-color:var(--ac)}
+.c h3{margin:0 0 5px;font-size:16px;font-weight:600}
+.c p{margin:0 0 6px;color:#b9c3ef;font-size:14px}
+.m{font-size:12px;color:var(--mut);display:flex;gap:8px;flex-wrap:wrap}
+.b{background:#13204f;color:var(--ac);border-radius:6px;padding:0 6px}
+</style></head><body><div class="w">
+<header>
+ <svg width="38" height="38" viewBox="0 0 38 38"><circle cx="19" cy="19" r="9" fill="#8fb0ff"/><ellipse cx="19" cy="21" rx="17" ry="5.5" fill="none" stroke="#3f6df0" stroke-width="3" transform="rotate(-18 19 21)"/><path d="M31 4v6M28 7h6" stroke="#8fb0ff" stroke-width="2"/></svg>
+ <div class="logo">OXY.GEN<small>OXYnews · только важное + ИИ</small></div>
+ <div class="sp"></div>
+ <button class="ib" id="au" title="Автообновление каждые 10 мин">Авто</button>
+ <button class="ib" id="rf" title="Обновить">⟳</button>
+ <button class="ib" id="cf" title="Настройки">⚙</button>
+</header>
+<div class="s"><input id="q" placeholder="Что искать? Например: чипы Nvidia" enterkeyhint="search"><button class="go" id="gb">Найти</button></div>
+<div class="lb">Раздел</div><div class="ch" id="cats"></div>
+<div class="lb">Регион</div><div class="ch" id="regs"></div>
+<div id="st"></div><div id="out"></div>
+</div>
+<script>
+const WORKER_DEFAULT="https://oxynews.kfd0309.workers.dev"; // вставь сюда адрес своего Worker, либо задай через ⚙
+const $=id=>document.getElementById(id);
+const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+let W=(get('oxy_w')||WORKER_DEFAULT).replace(/\/$/,'');
+const CATS={"Технологии":"technology OR AI OR software","Наука":"science OR physics OR space","Политика":"politics OR government OR election","Экономика":"economy OR markets OR inflation","Спорт":"sport","Здоровье":"health OR medicine","Мир":"war OR conflict OR diplomacy"};
+const REG={"Америка":["US","CA","BR","MX","AR"],"Европа":["UK","GM","FR","IT","SP","PL"],"Азия":["CH","JA","IN","KS","TU"],"Африка":["SF","EG","NI","KE"],"СНГ":["RS","UP","BO","KZ"]};
+const sel={c:new Set(),r:new Set()};
+function chips(box,obj,set){
+ Object.keys(obj).forEach(k=>{
+  const e=document.createElement('button');e.className='chip';e.textContent=k;
+  e.onclick=()=>{set.has(k)?set.delete(k):set.add(k);e.classList.toggle('on')};
+  $(box).appendChild(e);
+ });
+}
+chips('cats',CATS,sel.c);chips('regs',REG,sel.r);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function ago(d){
+ const m=/^(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)/.exec(d||'');if(!m)return '';
+ const t=Date.UTC(m[1],m[2]-1,m[3],m[4],m[5],m[6]),h=Math.max(0,Math.round((Date.now()-t)/36e5));
+ return h<1?'только что':h+' ч назад';
+}
+async function getNews(qs){
+ const urls=[];if(W)urls.push(W+'/news'+qs);urls.push('https://api.gdeltproject.org/api/v2/doc/doc'+qs);
+ let last='';
+ for(const u of urls){
+  try{const t=await (await fetch(u)).text();if(t.trim().startsWith('{'))return t;last=t}catch(e){last=e.message}
+ }
+ throw new Error(last||'нет ответа');
+}
+async function _load(){
+ const q=$('q').value.trim(),cat=[...sel.c].map(c=>'('+CATS[c]+')').join(' OR ');
+ const codes=[...sel.r].flatMap(r=>REG[r]);
+ let query=q&&cat?q+' ('+cat+')':(q||(cat?'('+cat+')':'(world OR economy OR technology)'));
+ if(codes.length)query+=' ('+codes.map(c=>'sourcecountry:'+c).join(' OR ')+')';
+ const qs='?query='+encodeURIComponent(query)+'&mode=artlist&format=json&maxrecords=60&sort=datedesc&timespan=3d';
+ $('st').textContent='Ищу новости…';$('out').innerHTML='';
+ let arts=[],raw='';
+ try{
+  raw=await getNews(qs);
+  arts=(JSON.parse(raw).articles)||[];
+ }catch(e){$('st').textContent='Ошибка: '+String(e.message||e).slice(0,200);return}
+ const seen=new Set();arts=arts.filter(a=>{const k=(a.title||'').toLowerCase().slice(0,60);if(!k||seen.has(k))return false;seen.add(k);return true}).slice(0,40);
+ if(!arts.length){$('st').textContent='Ничего не найдено. Ответ сервера: '+raw.slice(0,200);return}
+ let items=arts.map((a,i)=>({a,score:null,ru:a.title,why:''}));
+ if(W){
+  $('st').textContent='ИИ отбирает важное…';
+  try{
+   const intent=q||[...sel.c].join(', ')||'самые важные новости мира';
+   const list=arts.map((a,i)=>i+'|'+a.title+'|'+a.domain).join('\n');
+   const r=await fetch(W+'/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[
+    {role:'system',content:'Ты редактор новостей. Отвечай ТОЛЬКО валидным JSON-массивом без пояснений.'},
+    {role:'user',content:'Интерес читателя: «'+intent+'».\nНиже новости (номер|заголовок|сайт). Оцени каждую: score 1-10 (важность и соответствие интересу; мусор, реклама, слухи и дубли — 1-3). Верни массив [{"i":номер,"score":число,"ru":"заголовок по-русски","why":"одно короткое предложение — суть по-русски"}] только для score>=6, не больше 15 штук.\n'+list}]})});
+   const t=(await r.json()).text||'',m=t.match(/\[[\s\S]*\]/);
+   const ai=JSON.parse(m[0]).filter(x=>arts[x.i]).sort((x,y)=>y.score-x.score);
+   if(ai.length)items=ai.map(x=>({a:arts[x.i],score:x.score,ru:x.ru||arts[x.i].title,why:x.why||''}));
+  }catch(e){}
+ }
+ $('st').textContent='Найдено: '+items.length+(items[0].score?' · отобрано ИИ':' · без ИИ (укажи Worker в ⚙)');
+ $('out').innerHTML=items.map(x=>'<a class="c" target="_blank" rel="noopener" href="'+esc(x.a.url)+'"><h3>'+esc(x.ru)+'</h3>'+(x.why?'<p>'+esc(x.why)+'</p>':'')+'<div class="m">'+(x.score?'<span class="b">важность '+x.score+'/10</span>':'')+'<span>'+esc(x.a.domain)+'</span><span>'+esc(x.a.sourcecountry||'')+'</span><span>'+ago(x.a.seendate)+'</span></div></a>').join('');
+}
+async function load(){if(load.b)return;load.b=true;try{await _load()}finally{load.b=false}}
+$('gb').onclick=load;$('rf').onclick=load;
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')load()});
+let timer=null;
+$('au').onclick=()=>{
+ if(timer){clearInterval(timer);timer=null}else{timer=setInterval(load,6e5);load()}
+ $('au').classList.toggle('on',!!timer);
+};
+$('cf').onclick=()=>{
+ const v=prompt('Адрес Cloudflare Worker (https://….workers.dev):',W);
+ if(v!==null){W=v.trim().replace(/\/$/,'');put('oxy_w',W);load()}
+};
+load();
+</script></body></html>
