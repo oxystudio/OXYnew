@@ -1,122 +1,252 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#02030f">
-<title>OXY.GEN — OXYnews</title>
+<meta name="theme-color" content="#000000">
+<title>Brief News</title>
 <style>
-:root{--bg:#02030f;--card:#0a1030;--line:#1a2552;--tx:#e8ecff;--mut:#7f8ab5;--ac:#5b8cff}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-.w{max-width:760px;margin:0 auto;padding:14px}
-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.logo{font:600 22px Georgia,'Times New Roman',serif;letter-spacing:.06em}
-.logo small{display:block;font:12px system-ui;color:var(--mut);letter-spacing:.02em}
-.sp{flex:1}
+:root{--card:#0d0d13;--line:#202029;--tx:#f5f5f7;--mut:#8b8b99;--a:#8ab4ff;--b:#c4a1ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{background:#000}
+body{margin:0;color:var(--tx);font:15px/1.45 -apple-system,'SF Pro Display','Segoe UI',Roboto,sans-serif;min-height:100vh;
+background:radial-gradient(800px 380px at 85% -8%,#16163a 0,transparent 60%),radial-gradient(640px 340px at -10% 2%,#0b1d40 0,transparent 55%),#000;padding-top:env(safe-area-inset-top)}
 button,input{font:inherit;color:var(--tx)}
-.ib{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 11px;cursor:pointer}
-.ib.on{border-color:var(--ac);color:var(--ac)}
-.s{display:flex;gap:8px;margin-bottom:10px}
-.s input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;outline:none}
-.s input:focus{border-color:var(--ac)}
-.go{background:var(--ac);border:0;border-radius:12px;padding:0 18px;font-weight:600;color:#fff;cursor:pointer}
-.lb{font-size:12px;color:var(--mut);margin:10px 0 5px}
-.ch{display:flex;flex-wrap:wrap;gap:6px}
-.chip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;cursor:pointer}
-.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
-#st{color:var(--mut);font-size:13px;margin:14px 0 8px;min-height:18px}
-.c{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px;text-decoration:none;color:inherit}
-.c:active{border-color:var(--ac)}
-.c h3{margin:0 0 5px;font-size:16px;font-weight:600}
-.c p{margin:0 0 6px;color:#b9c3ef;font-size:14px}
-.m{font-size:12px;color:var(--mut);display:flex;gap:8px;flex-wrap:wrap}
-.b{background:#13204f;color:var(--ac);border-radius:6px;padding:0 6px}
-</style></head><body><div class="w">
+svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.app{display:flex}.main{flex:1;min-width:0}
+.w{max-width:1100px;margin:0 auto;padding:0 16px 110px}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;padding:12px 0;background:rgba(0,0,0,.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:22px;letter-spacing:-.035em;line-height:1}
+.sp{flex:1}
+.ib{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#0e0e14;border:1px solid var(--line);border-radius:12px;height:40px;min-width:40px;padding:0 11px;cursor:pointer}
+.sb{display:flex;gap:10px;margin:6px 0 12px}
+.si{flex:1;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0 14px;color:var(--mut);transition:.2s}
+.si:focus-within{border-color:var(--a);box-shadow:0 0 0 4px #8ab4ff22}
+.si input{flex:1;min-width:0;background:none;border:0;outline:none;padding:14px 0}
+.row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:2px 16px 4px}
+.row::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-size:14px;cursor:pointer;transition:.15s}
+.chip.on{background:#fff;color:#000;border-color:#fff;font-weight:600}
+#st{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:13px;margin:12px 0 10px;min-height:20px}
+#st i{width:7px;height:7px;border-radius:50%;background:var(--a);box-shadow:0 0 10px var(--a);flex:none}
+#st.busy i{animation:pl 1s infinite}
+.cols{display:block}.side{display:none}
+.hero{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line)}
+.hs{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.hs::-webkit-scrollbar{display:none}
+.sl{flex:none;width:100%;scroll-snap-align:start;position:relative;min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;padding:18px;color:#fff;text-decoration:none}
+.sl::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(0,0,0,.88))}
+.sl>*{position:relative;margin:0}
+.sl h2{font-size:25px;line-height:1.15;letter-spacing:-.02em;margin:10px 0 6px}
+.sl p{color:#d3d5e6;font-size:15px;margin:0 0 10px}
+.tag{align-self:flex-start;border:1px solid #fff6;border-radius:99px;padding:2px 11px;font-size:12px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px)}
+.dots{position:absolute;right:16px;bottom:16px;display:flex;gap:6px}
+.dots b{width:6px;height:6px;border-radius:50%;background:#fff5}.dots b.on{background:#fff}
+.m{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--mut)}
+.sl .m{color:#c3c6dc}
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:22px 0 4px}
+.sec h2{margin:0;font-size:21px;letter-spacing:-.02em}
+.sec a{color:#4f8cff;font-size:13px;cursor:pointer}
+.list:not(.all) .n:nth-child(n+7){display:none}
+.n{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid #16161d;text-decoration:none;color:inherit;position:relative;animation:up .45s both}
+.th{flex:none;width:122px;height:88px;border-radius:12px;background-size:cover}
+.nb{flex:1;min-width:0;padding-right:26px}
+.nt{display:inline-block;font-size:11px;background:#1a1a24;border-radius:6px;padding:1px 8px}
+.n h4{margin:5px 0;font-size:15.5px;line-height:1.3;font-weight:600}
+.bm{position:absolute;right:0;bottom:12px;background:none;border:0;color:var(--a);font-size:18px;cursor:pointer;padding:4px}
+.pn{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:12px}
+.pn p{margin:8px 0;font-size:14px;color:#cfd1e4}.pn p.or{color:var(--mut)}
+.ph{display:flex;align-items:center;gap:8px}.ph .i{color:var(--a)}
+.lg{margin-left:auto;font-size:12px;background:#1a1a24;border-radius:8px;padding:2px 9px}
+.rd{display:block;text-align:center;background:#171722;border:1px solid var(--line);border-radius:10px;padding:8px;color:var(--tx);text-decoration:none;font-size:13px}
+.pp{display:flex;gap:12px;padding:10px 0 0;color:inherit;text-decoration:none;font-size:14px}
+.pp span{font-size:20px;color:var(--mut);width:18px}
+.sk{border-radius:18px;margin-bottom:10px;background:linear-gradient(90deg,#0d0d13 25%,#18181f 50%,#0d0d13 75%);background-size:200% 100%;animation:sh 1.2s infinite}
+.tabs{position:fixed;bottom:0;left:0;right:0;z-index:20;display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom));background:rgba(8,8,12,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line)}
+.tabs button,.rail button{background:none;border:0;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:6px 14px;border-radius:14px;cursor:pointer}
+.tabs button.on{color:var(--a)}
+.rail{display:none}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;z-index:50;align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.sh{background:#0e0e15;border:1px solid var(--line);border-radius:22px 22px 0 0;width:100%;max-width:560px;max-height:82vh;overflow:auto;padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
+.lb{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:14px 0 8px}
+.wrap{display:flex;flex-wrap:wrap;gap:8px}
+.go{border:0;border-radius:14px;padding:12px 20px;font-weight:700;color:#000;cursor:pointer;background:linear-gradient(135deg,var(--a),var(--b));margin-top:16px;width:100%}
+.fi{width:100%;background:#0a0a10;border:1px solid var(--line);border-radius:12px;padding:12px;outline:none;margin:6px 0}
+@media(min-width:820px){
+ .tabs{display:none}
+ .rail{display:flex;flex-direction:column;gap:10px;position:sticky;top:0;height:100vh;padding:90px 14px;flex:none}
+ .rail button{width:54px;height:54px;justify-content:center}.rail span{display:none}
+ .rail button.on{background:#2456e8;color:#fff}
+ .w{padding-bottom:40px}
+ .cols{display:grid;grid-template-columns:1fr 300px;gap:16px}.side{display:block}
+ .sl{min-height:340px}.sl h2{font-size:32px}
+ .list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+ .n{flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;gap:8px}
+ .th{width:100%;height:120px}.nb{padding:0}.bm{bottom:10px;right:10px}
+ .ov{align-items:center}.sh{border-radius:22px}
+}
+@keyframes up{from{opacity:0;transform:translateY(10px)}}
+@keyframes sh{to{background-position:-200% 0}}
+@keyframes pl{50%{opacity:.25}}
+</style></head><body><div class="app">
+<nav class="rail" id="rail"></nav>
+<div class="main"><div class="w">
 <header>
- <svg width="38" height="38" viewBox="0 0 38 38"><circle cx="19" cy="19" r="9" fill="#8fb0ff"/><ellipse cx="19" cy="21" rx="17" ry="5.5" fill="none" stroke="#3f6df0" stroke-width="3" transform="rotate(-18 19 21)"/><path d="M31 4v6M28 7h6" stroke="#8fb0ff" stroke-width="2"/></svg>
- <div class="logo">OXY.GEN<small>OXYnews · только важное + ИИ</small></div>
+ <div class="brand">
+  <svg width="40" height="34" viewBox="0 0 40 34" fill="none"><ellipse cx="19" cy="19" rx="16" ry="7.5" transform="rotate(-24 19 19)" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 7 22 200"/><path d="M32 2c.8 5 2.6 6.8 7 7.5-4.4.9-6.2 2.7-7 7.5-.8-4.8-2.6-6.6-7-7.5 4.4-.7 6.2-2.5 7-7.5z" fill="#fff"/><text x="10" y="23" font-size="13" font-weight="800" fill="#fff" font-family="system-ui">B</text></svg>
+  <span>Brief News</span>
+ </div>
  <div class="sp"></div>
- <button class="ib" id="au" title="Автообновление каждые 10 мин">Авто</button>
  <button class="ib" id="rf" title="Обновить">⟳</button>
- <button class="ib" id="cf" title="Настройки">⚙</button>
 </header>
-<div class="s"><input id="q" placeholder="Что искать? Например: чипы Nvidia" enterkeyhint="search"><button class="go" id="gb">Найти</button></div>
-<div class="lb">Раздел</div><div class="ch" id="cats"></div>
-<div class="lb">Регион</div><div class="ch" id="regs"></div>
-<div id="st"></div><div id="out"></div>
+<div class="sb"><label class="si" data-ic="search"><input id="q" placeholder="Поиск по новостям…" enterkeyhint="search"></label><button class="ib" id="fb" data-ic="sl" title="Фильтры"></button></div>
+<div class="row" id="cats"></div>
+<div id="st"><i></i><span></span></div>
+<div id="home"><div class="cols"><div>
+ <div id="hero"></div>
+ <div class="sec"><h2>Главные новости</h2><a id="all">Все →</a></div>
+ <div class="list" id="list"></div>
+</div><aside class="side" id="side"></aside></div></div>
+<div id="saved" hidden><div class="sec"><h2>Закладки</h2></div><div class="list all" id="slist"></div></div>
+<div id="settings" hidden><div class="sec"><h2>Настройки</h2></div>
+ <div class="pn"><div class="lb" style="margin-top:0">Адрес Worker</div><input class="fi" id="wi" placeholder="https://….workers.dev"><button class="go" id="ws" style="margin-top:6px">Сохранить</button></div>
+ <div class="pn"><div class="lb" style="margin-top:0">Автообновление ленты (раз в 10 мин)</div><button class="ib" id="au">Выключено</button></div>
+ <div class="pn"><button class="ib" id="bc">Очистить закладки</button></div>
 </div>
+</div></div></div>
+<nav class="tabs" id="tabs"></nav>
+<div class="ov" id="ov"><div class="sh">
+ <b style="font-size:19px">Фильтры</b>
+ <div class="lb">Регион</div><div class="wrap" id="regs"></div>
+ <div class="lb">Страны</div><div class="wrap" id="ctry"></div>
+ <button class="go" id="ok">Применить</button>
+ <button class="ib" id="rs" style="width:100%;margin-top:8px">Сбросить</button>
+</div></div>
 <script>
-const WORKER_DEFAULT="https://oxynews.kfd0309.workers.dev"; // вставь сюда адрес своего Worker, либо задай через ⚙
+const WORKER_DEFAULT="https://oxynews.kfd0309.workers.dev";
 const $=id=>document.getElementById(id);
 const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const put=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
-let W=(get('oxy_w')||WORKER_DEFAULT).replace(/\/$/,'');
-const CATS={"Технологии":"technology OR AI OR software","Наука":"science OR physics OR space","Политика":"politics OR government OR election","Экономика":"economy OR markets OR inflation","Спорт":"sport","Здоровье":"health OR medicine","Мир":"war OR conflict OR diplomacy"};
-const REG={"Америка":["US","CA","BR","MX","AR"],"Европа":["UK","GM","FR","IT","SP","PL"],"Азия":["CH","JA","IN","KS","TU"],"Африка":["SF","EG","NI","KE"],"СНГ":["RS","UP","BO","KZ"]};
-const sel={c:new Set(),r:new Set()};
-function chips(box,obj,set){
- Object.keys(obj).forEach(k=>{
-  const e=document.createElement('button');e.className='chip';e.textContent=k;
-  e.onclick=()=>{set.has(k)?set.delete(k):set.add(k);e.classList.toggle('on')};
-  $(box).appendChild(e);
- });
+let W=(get('bn_w')||WORKER_DEFAULT).replace(/\/$/,'');
+let bm=[];try{bm=JSON.parse(get('bn_bm')||'[]')}catch(e){}
+let cur=[];
+const IC={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',bm:'<path d="M6 3h12v18l-6-4-6 4z"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',sl:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',spark:'<path d="M12 2c.8 5.5 2.8 7.7 8 8.5-5.2.8-7.2 3-8 8.5-.8-5.5-2.8-7.7-8-8.5 5.2-.8 7.2-3 8-8.5z"/>',tr:'<path d="M4 5h9M8.5 3v2M6 5c1 4 3.5 6.5 6.5 8M12 5c-1 4-4 7-8 9M14 21l4-9 4 9M15.5 18h5"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/>'};
+const svg=n=>'<svg class="i" viewBox="0 0 24 24">'+IC[n]+'</svg>';
+document.querySelectorAll('[data-ic]').forEach(e=>e.insertAdjacentHTML('afterbegin',svg(e.dataset.ic)));
+const NAV=[['home','home','Главная'],['search','search','Поиск'],['saved','bm','Закладки'],['settings','gear','Настройки']];
+const navHTML=NAV.map(([v,i,l])=>'<button data-v="'+v+'">'+svg(i)+'<span>'+l+'</span></button>').join('');
+$('tabs').innerHTML=navHTML;$('rail').innerHTML=navHTML;
+function setView(v){
+ if(v==='search'){setView('home');$('q').focus();scrollTo({top:0,behavior:'smooth'});return}
+ ['home','saved','settings'].forEach(x=>$(x).hidden=x!==v);
+ document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+ if(v==='saved')renderSaved();if(v==='settings')$('wi').value=W;
 }
-chips('cats',CATS,sel.c);chips('regs',REG,sel.r);
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+const CATS={'Технологии':'TECHNOLOGY','Наука':'SCIENCE','Политика':'POLITICS','Экономика':'BUSINESS','Спорт':'SPORTS','Здоровье':'HEALTH','Мир':'WORLD'};
+const REV=Object.fromEntries(Object.entries(CATS).map(([k,v])=>[v,k]));
+const REG={'Америка':['US','CA','BR'],'Европа':['GB','DE','FR'],'Азия':['JP','IN','KR'],'Африка':['ZA','NG'],'СНГ':['RU','UA']};
+const CN={US:'США',GB:'Британия',DE:'Германия',FR:'Франция',RU:'Россия',UA:'Украина',JP:'Япония',IN:'Индия',KR:'Корея',CA:'Канада',BR:'Бразилия',ZA:'ЮАР',NG:'Нигерия'};
+const PAL={'Технологии':['#3b82f6','#22d3ee'],'Наука':['#8b5cf6','#06b6d4'],'Политика':['#ef4444','#f59e0b'],'Экономика':['#10b981','#84cc16'],'Спорт':['#f97316','#eab308'],'Здоровье':['#ec4899','#f43f5e'],'Мир':['#6366f1','#0ea5e9'],'_':['#6d7cff','#c4a1ff']};
+const cats=new Set(),ctry=new Set();
+const flag=c=>String.fromCodePoint(...[...(c||'UN')].map(x=>127397+x.charCodeAt()));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function ago(d){
- const m=/^(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)/.exec(d||'');if(!m)return '';
- const t=Date.UTC(m[1],m[2]-1,m[3],m[4],m[5],m[6]),h=Math.max(0,Math.round((Date.now()-t)/36e5));
- return h<1?'только что':h+' ч назад';
+const hash=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt())|0;return Math.abs(h)};
+function cover(cat,t){const p=PAL[cat]||PAL._,h=hash(t);return 'radial-gradient(circle at '+h%90+'% '+(h>>3)%70+'%,'+p[0]+'cc 0,transparent 55%),radial-gradient(circle at '+(h>>5)%100+'% '+(60+(h>>7)%40)+'%,'+p[1]+'99 0,transparent 50%),linear-gradient(160deg,#10102a,#05050c)'}
+const catOf=x=>x.cat||REV[x.a.topic]||'Новости';
+function ago(ms){if(!ms)return '';const m=Math.max(0,Math.round((Date.now()-ms)/6e4));return m<1?'только что':m<60?m+' мин назад':m<1440?Math.round(m/60)+' ч назад':Math.round(m/1440)+' д назад'}
+let tm;const later=()=>{clearTimeout(tm);tm=setTimeout(load,700)};
+function mk(box,list,fn,auto){list.forEach(([k,l])=>{const e=document.createElement('button');e.className='chip';e.dataset.k=k;e.innerHTML=l;e.onclick=()=>{fn(k);sync();if(auto)later()};$(box).appendChild(e)})}
+mk('cats',Object.keys(CATS).map(k=>[k,k]),k=>cats.has(k)?cats.delete(k):cats.add(k),1);
+const gp=document.createElement('button');gp.className='chip';gp.onclick=()=>$('ov').classList.add('on');$('cats').appendChild(gp);
+mk('regs',Object.keys(REG).map(k=>[k,k]),k=>{const all=REG[k].every(c=>ctry.has(c));REG[k].forEach(c=>all?ctry.delete(c):ctry.add(c))});
+mk('ctry',Object.entries(CN).map(([c,n])=>[c,flag(c)+' '+n]),c=>ctry.has(c)?ctry.delete(c):ctry.add(c));
+function sync(){
+ document.querySelectorAll('#cats .chip[data-k]').forEach(e=>e.classList.toggle('on',cats.has(e.dataset.k)));
+ document.querySelectorAll('#regs .chip').forEach(e=>e.classList.toggle('on',REG[e.dataset.k].every(c=>ctry.has(c))));
+ document.querySelectorAll('#ctry .chip').forEach(e=>e.classList.toggle('on',ctry.has(e.dataset.k)));
+ gp.innerHTML=svg('globe')+(ctry.size?ctry.size+' стран':'Все страны');
 }
-async function getNews(qs){
- const urls=[];if(W)urls.push(W+'/news'+qs);urls.push('https://api.gdeltproject.org/api/v2/doc/doc'+qs);
- let last='';
- for(const u of urls){
-  try{const t=await (await fetch(u)).text();if(t.trim().startsWith('{'))return t;last=t}catch(e){last=e.message}
- }
- throw new Error(last||'нет ответа');
+sync();
+$('fb').onclick=()=>$('ov').classList.add('on');
+$('ov').onclick=e=>{if(e.target===$('ov'))$('ov').classList.remove('on')};
+$('ok').onclick=()=>{$('ov').classList.remove('on');load()};
+$('rs').onclick=()=>{ctry.clear();sync()};
+function st(t,b){$('st').className=b?'busy':'';$('st').lastElementChild.textContent=t}
+function skel(){$('hero').innerHTML='<div class="sk" style="height:320px;border-radius:22px"></div>';$('list').innerHTML='<div class="sk" style="height:92px"></div>'.repeat(4);$('side').innerHTML=''}
+const isBm=u=>bm.some(b=>b.a.url===u);
+function itemHTML(x,i){
+ const c=catOf(x);
+ return '<a class="n" style="animation-delay:'+i*40+'ms" target="_blank" rel="noopener" href="'+esc(x.a.url)+'"><div class="th" style="background:'+cover(c,x.ru)+'"></div><div class="nb"><span class="nt">'+esc(c)+'</span><h4>'+esc(x.ru)+'</h4><div class="m"><span>'+ago(x.a.date)+'</span><span>•</span><span>'+esc(x.a.source||'')+'</span><span>'+flag(x.a.country)+'</span></div></div><button class="bm" data-u="'+esc(x.a.url)+'">'+(isBm(x.a.url)?'★':'☆')+'</button></a>';
 }
+function render(items,an){
+ cur=items;
+ const hn=Math.min(4,items.length),hero=items.slice(0,hn);
+ let rest=items.slice(hn);if(!rest.length)rest=items.slice(1);
+ $('hero').innerHTML='<div class="hero"><div class="hs" id="hs">'+hero.map(x=>{const c=catOf(x);return '<a class="sl" target="_blank" rel="noopener" href="'+esc(x.a.url)+'" style="background:'+cover(c,x.ru)+'"><span class="tag">'+esc(c)+'</span><h2>'+esc(x.ru)+'</h2>'+(x.why?'<p>'+esc(x.why)+'</p>':'')+'<div class="m">'+ago(x.a.date)+' • '+esc(x.a.source||'')+'</div></a>'}).join('')+'</div><div class="dots">'+hero.map((_,i)=>'<b'+(i?'':' class="on"')+'></b>').join('')+'</div></div>';
+ const hs=$('hs');hs.onscroll=()=>{const i=Math.round(hs.scrollLeft/hs.clientWidth);document.querySelectorAll('.dots b').forEach((d,j)=>d.classList.toggle('on',j===i))};
+ $('list').innerHTML=rest.map(itemHTML).join('');
+ const t=items[0];
+ $('side').innerHTML=
+  '<div class="pn"><div class="ph">'+svg('spark')+'<b>ИИ-анализ</b></div><p>'+esc(an||t.why||'Анализ появится, когда ответит ИИ.')+'</p><a class="rd" target="_blank" rel="noopener" href="'+esc(t.a.url)+'">Читать подробнее →</a></div>'+
+  '<div class="pn"><div class="ph">'+svg('tr')+'<b>Перевод</b><span class="lg">RU</span></div><p class="or">'+esc(t.a.title)+'</p><p>'+esc(t.ru)+'</p><button class="ib" id="cp" title="Копировать">'+svg('copy')+'</button></div>'+
+  '<div class="pn"><b>Популярное</b>'+items.slice(1,4).map((x,i)=>'<a class="pp" target="_blank" rel="noopener" href="'+esc(x.a.url)+'"><span>'+(i+1)+'</span><div>'+esc(x.ru)+'</div></a>').join('')+'</div>';
+ const cp=$('cp');if(cp)cp.onclick=()=>{try{navigator.clipboard.writeText(t.ru)}catch(e){}};
+}
+function renderSaved(){$('slist').innerHTML=bm.length?bm.map(itemHTML).join(''):'<p style="color:var(--mut)">Пока пусто. Нажми ☆ у новости.</p>'}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('.bm');if(!b)return;
+ e.preventDefault();e.stopPropagation();
+ const u=b.dataset.u,i=bm.findIndex(x=>x.a.url===u);
+ if(i>=0)bm.splice(i,1);else{const it=cur.find(x=>x.a.url===u);if(it)bm.push(it)}
+ put('bn_bm',JSON.stringify(bm));
+ document.querySelectorAll('.bm').forEach(x=>{if(x.dataset.u===u)x.textContent=isBm(u)?'★':'☆'});
+ if(!$('saved').hidden)renderSaved();
+},true);
+$('all').onclick=()=>{const on=$('list').classList.toggle('all');$('all').textContent=on?'Свернуть':'Все →'};
 async function _load(){
- const q=$('q').value.trim(),cat=[...sel.c].map(c=>'('+CATS[c]+')').join(' OR ');
- const codes=[...sel.r].flatMap(r=>REG[r]);
- let query=q&&cat?q+' ('+cat+')':(q||(cat?'('+cat+')':'(world OR economy OR technology)'));
- if(codes.length)query+=' ('+codes.map(c=>'sourcecountry:'+c).join(' OR ')+')';
- const qs='?query='+encodeURIComponent(query)+'&mode=artlist&format=json&maxrecords=60&sort=datedesc&timespan=3d';
- $('st').textContent='Ищу новости…';$('out').innerHTML='';
- let arts=[],raw='';
+ setView('home');
+ if(!W){st('Укажи адрес Worker в настройках');return}
+ const q=$('q').value.trim();
+ const eds=[...ctry].slice(0,5).join(',')||'US,GB,RU,DE';
+ const topics=q?'':[...cats].map(c=>CATS[c]).slice(0,3).join(',');
+ st('Собираю новости…',1);skel();
+ let arts=[];
  try{
-  raw=await getNews(qs);
-  arts=(JSON.parse(raw).articles)||[];
- }catch(e){$('st').textContent='Ошибка: '+String(e.message||e).slice(0,200);return}
- const seen=new Set();arts=arts.filter(a=>{const k=(a.title||'').toLowerCase().slice(0,60);if(!k||seen.has(k))return false;seen.add(k);return true}).slice(0,40);
- if(!arts.length){$('st').textContent='Ничего не найдено. Ответ сервера: '+raw.slice(0,200);return}
- let items=arts.map((a,i)=>({a,score:null,ru:a.title,why:''}));
- if(W){
-  $('st').textContent='ИИ отбирает важное…';
-  try{
-   const intent=q||[...sel.c].join(', ')||'самые важные новости мира';
-   const list=arts.map((a,i)=>i+'|'+a.title+'|'+a.domain).join('\n');
-   const r=await fetch(W+'/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[
-    {role:'system',content:'Ты редактор новостей. Отвечай ТОЛЬКО валидным JSON-массивом без пояснений.'},
-    {role:'user',content:'Интерес читателя: «'+intent+'».\nНиже новости (номер|заголовок|сайт). Оцени каждую: score 1-10 (важность и соответствие интересу; мусор, реклама, слухи и дубли — 1-3). Верни массив [{"i":номер,"score":число,"ru":"заголовок по-русски","why":"одно короткое предложение — суть по-русски"}] только для score>=6, не больше 15 штук.\n'+list}]})});
-   const t=(await r.json()).text||'',m=t.match(/\[[\s\S]*\]/);
-   const ai=JSON.parse(m[0]).filter(x=>arts[x.i]).sort((x,y)=>y.score-x.score);
-   if(ai.length)items=ai.map(x=>({a:arts[x.i],score:x.score,ru:x.ru||arts[x.i].title,why:x.why||''}));
-  }catch(e){}
- }
- $('st').textContent='Найдено: '+items.length+(items[0].score?' · отобрано ИИ':' · без ИИ (укажи Worker в ⚙)');
- $('out').innerHTML=items.map(x=>'<a class="c" target="_blank" rel="noopener" href="'+esc(x.a.url)+'"><h3>'+esc(x.ru)+'</h3>'+(x.why?'<p>'+esc(x.why)+'</p>':'')+'<div class="m">'+(x.score?'<span class="b">важность '+x.score+'/10</span>':'')+'<span>'+esc(x.a.domain)+'</span><span>'+esc(x.a.sourcecountry||'')+'</span><span>'+ago(x.a.seendate)+'</span></div></a>').join('');
+  const r=await fetch(W+'/news?'+new URLSearchParams({q,eds,topics}));
+  arts=(JSON.parse(await r.text()).articles)||[];
+ }catch(e){$('hero').innerHTML='';$('list').innerHTML='';st('Не удалось получить новости. Проверь Worker в настройках.');return}
+ if(!arts.length){$('hero').innerHTML='';$('list').innerHTML='';st('Ничего не найдено. Попробуй другой запрос.');return}
+ arts=arts.slice(0,45);
+ let items=arts.slice(0,20).map(a=>({a,score:0,ru:a.title,why:'',cat:''})),an='';
+ render(items);
+ st('ИИ отбирает важное…',1);
+ try{
+  const intent=q||[...cats].join(', ')||'самые важные новости мира';
+  const list=arts.map((a,i)=>i+'|'+a.title+'|'+a.source).join('\n');
+  const r=await fetch(W+'/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[
+   {role:'system',content:'Ты редактор новостей. Отвечай ТОЛЬКО валидным JSON без пояснений.'},
+   {role:'user',content:'Интерес читателя: «'+intent+'».\nНиже новости (номер|заголовок|источник). Оцени каждую: score 1-10 (важность и соответствие интересу; реклама, слухи, дубли, мелочи — 1-4). Верни объект {"analysis":"2-3 предложения по-русски: главное событие и почему оно важно","items":[{"i":номер,"score":число,"cat":"одно из: Технологии, Наука, Политика, Экономика, Спорт, Здоровье, Мир","ru":"заголовок по-русски","why":"одно короткое предложение сути по-русски"}]}. В items только score>=6, не больше 15, по убыванию score.\n'+list}]})});
+  const d=await r.json();
+  if(d.error)throw new Error(d.error);
+  const t=typeof d.text==='string'?d.text:JSON.stringify(d.text);
+  let p;const mo=t.match(/\{[\s\S]*\}/);
+  if(mo){try{p=JSON.parse(mo[0])}catch(e){}}
+  if(!p){const ma=t.match(/\[[\s\S]*\]/);p={items:JSON.parse(ma[0])}}
+  const ai=(p.items||[]).filter(x=>arts[x.i]).sort((x,y)=>y.score-x.score);
+  if(!ai.length)throw new Error('пустой ответ');
+  items=ai.map(x=>({a:arts[x.i],score:x.score,ru:x.ru||arts[x.i].title,why:x.why||'',cat:CATS[x.cat]?x.cat:''}));
+  an=p.analysis||'';
+  st('Главное по версии ИИ · '+items.length+' новостей');
+ }catch(e){st('ИИ недоступен ('+String(e.message||e).slice(0,70)+'). Показываю без отбора.')}
+ render(items,an);
 }
 async function load(){if(load.b)return;load.b=true;try{await _load()}finally{load.b=false}}
-$('gb').onclick=load;$('rf').onclick=load;
-$('q').addEventListener('keydown',e=>{if(e.key==='Enter')load()});
+$('rf').onclick=load;
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.target.blur();load()}});
+$('ws').onclick=()=>{W=$('wi').value.trim().replace(/\/$/,'');put('bn_w',W);load()};
+$('bc').onclick=()=>{bm=[];put('bn_bm','[]')};
 let timer=null;
-$('au').onclick=()=>{
- if(timer){clearInterval(timer);timer=null}else{timer=setInterval(load,6e5);load()}
- $('au').classList.toggle('on',!!timer);
-};
-$('cf').onclick=()=>{
- const v=prompt('Адрес Cloudflare Worker (https://….workers.dev):',W);
- if(v!==null){W=v.trim().replace(/\/$/,'');put('oxy_w',W);load()}
-};
-load();
+$('au').onclick=()=>{if(timer){clearInterval(timer);timer=null}else{timer=setInterval(load,6e5);load()}$('au').textContent=timer?'Включено':'Выключено'};
+setView('home');load();
 </script></body></html>
