@@ -207,14 +207,17 @@ async function _load(){
  setView('home');
  if(!W){st('Укажи адрес Worker в настройках');return}
  const q=$('q').value.trim();
- const eds=[...ctry].slice(0,5).join(',')||'US,GB,RU,DE';
+ const eds=[...ctry].slice(0,3).join(',')||'US,RU';
  const topics=q?'':[...cats].map(c=>CATS[c]).slice(0,3).join(',');
  st('Собираю новости…',1);skel();
  let arts=[];
  try{
   const r=await fetch(W+'/news?'+new URLSearchParams({q,eds,topics}),{signal:AbortSignal.timeout(30000)});
-  arts=(JSON.parse(await r.text()).articles)||[];
- }catch(e){$('hero').innerHTML='';$('list').innerHTML='';st('Не удалось получить новости ('+String(e.name==='TimeoutError'?'сервер не ответил за 30 с':e.message).slice(0,60)+'). Открой адрес Worker + /diag');return}
+  const tx=await r.text();
+  let d;try{d=JSON.parse(tx)}catch(e){throw new Error('ответ Worker (код '+r.status+'): '+tx.replace(/\s+/g,' ').slice(0,90))}
+  if(d.error)throw new Error(d.error);
+  arts=d.articles||[];
+ }catch(e){$('hero').innerHTML='';$('list').innerHTML='';st('Не удалось получить новости ('+String(e.name==='TimeoutError'?'сервер не ответил за 30 с':e.message).slice(0,160)+'). Открой адрес Worker + /diag');return}
  if(!arts.length){$('hero').innerHTML='';$('list').innerHTML='';st('Ничего не найдено. Попробуй другой запрос.');return}
  arts=arts.slice(0,45);
  let items=arts.slice(0,20).map(a=>({a,score:0,ru:a.title,why:'',cat:''})),an='';
