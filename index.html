@@ -125,7 +125,8 @@ const WORKER_DEFAULT="https://oxynews.kfd0309.workers.dev";
 const $=id=>document.getElementById(id);
 const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const put=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
-let W=(get('bn_w')||WORKER_DEFAULT).replace(/\/$/,'');
+const normW=v=>{v=(v||'').trim().replace(/\/+$/,'');return v&&!/^https?:\/\//i.test(v)?'https://'+v:v};
+let W=normW(get('bn_w'))||normW(WORKER_DEFAULT);
 let bm=[];try{bm=JSON.parse(get('bn_bm')||'[]')}catch(e){}
 let cur=[];
 const IC={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',bm:'<path d="M6 3h12v18l-6-4-6 4z"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',sl:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',spark:'<path d="M12 2c.8 5.5 2.8 7.7 8 8.5-5.2.8-7.2 3-8 8.5-.8-5.5-2.8-7.7-8-8.5 5.2-.8 7.2-3 8-8.5z"/>',tr:'<path d="M4 5h9M8.5 3v2M6 5c1 4 3.5 6.5 6.5 8M12 5c-1 4-4 7-8 9M14 21l4-9 4 9M15.5 18h5"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/>'};
@@ -210,15 +211,15 @@ async function _load(){
  const eds=[...ctry].slice(0,3).join(',')||'US,RU';
  const topics=q?'':[...cats].map(c=>CATS[c]).slice(0,3).join(',');
  st('Собираю новости…',1);skel();
- let arts=[];
+ let arts=[],dbg=[];
  try{
   const r=await fetch(W+'/news?'+new URLSearchParams({q,eds,topics}),{signal:AbortSignal.timeout(30000)});
   const tx=await r.text();
-  let d;try{d=JSON.parse(tx)}catch(e){throw new Error('ответ Worker (код '+r.status+'): '+tx.replace(/\s+/g,' ').slice(0,90))}
+  let d;try{d=JSON.parse(tx)}catch(e){throw new Error('адрес '+W+' (код '+r.status+'): '+tx.replace(/\s+/g,' ').slice(0,90))}
   if(d.error)throw new Error(d.error);
-  arts=d.articles||[];
+  arts=d.articles||[];dbg=d.debug||[];
  }catch(e){$('hero').innerHTML='';$('list').innerHTML='';st('Не удалось получить новости ('+String(e.name==='TimeoutError'?'сервер не ответил за 30 с':e.message).slice(0,160)+'). Открой адрес Worker + /diag');return}
- if(!arts.length){$('hero').innerHTML='';$('list').innerHTML='';st('Ничего не найдено. Попробуй другой запрос.');return}
+ if(!arts.length){$('hero').innerHTML='';$('list').innerHTML='';st('Ничего не найдено. Источники: '+(dbg.join(' | ')||'нет данных').slice(0,320));return}
  arts=arts.slice(0,45);
  let items=arts.slice(0,20).map(a=>({a,score:0,ru:a.title,why:'',cat:''})),an='';
  render(items);
@@ -246,7 +247,7 @@ async function _load(){
 async function load(){if(load.b)return;load.b=true;try{await _load()}finally{load.b=false}}
 $('rf').onclick=load;
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.target.blur();load()}});
-$('ws').onclick=()=>{W=$('wi').value.trim().replace(/\/$/,'');put('bn_w',W);load()};
+$('ws').onclick=()=>{W=normW($('wi').value)||normW(WORKER_DEFAULT);put('bn_w',W);$('wi').value=W;load()};
 $('bc').onclick=()=>{bm=[];put('bn_bm','[]')};
 let timer=null;
 $('au').onclick=()=>{if(timer){clearInterval(timer);timer=null}else{timer=setInterval(load,6e5);load()}$('au').textContent=timer?'Включено':'Выключено'};
