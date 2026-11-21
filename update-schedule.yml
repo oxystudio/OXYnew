@@ -1,0 +1,41 @@
+name: Update schedule
+on:
+  schedule: [{cron: "0 */6 * * *"}]
+  workflow_dispatch:
+permissions: {contents: write}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Download calendars
+        run: |
+          mkdir -p feeds
+          # 1) точное время сессий (RaceTV Guide)
+          curl -fsSL https://www.racetvguide.com/calendars/all.ics -o feeds/racetv.ics || rm -f feeds/racetv.ics
+          # 2) даты этапов: Current Paddock (Европа)
+          Y=$(date +%Y)
+          for Z in $Y $((Y+1)) $((Y+2)); do
+            curl -fsSL https://currentpaddock.world/assets/data/calendar-$Z.ics -o feeds/paddock-$Z.ics || rm -f feeds/paddock-$Z.ics
+          done
+          # 3) даты этапов: toomuchracing.com (публичные Google Calendar, id серии = имя файла)
+          declare -A TMR=(
+            [f2]=rttoqh7u6m247f2ub6c05m4pe4 [f3]=sorhedtr7q5qmea6f0hvf20864 [wec]=61jccgg4rshh1temqk0dj4lens
+            [imsa]=njulhksvo83qeoruc3nhend9js [sgt]=5ni9rjbofnkfvmpidmjpep9ek0 [dtm]=0urnjij5qqj3ijoht52fdsqk18
+            [igtc]=kcelko7ictk6okcf4peougahlo [gtwce]=drne83rrmn7m9baje25qh2248s [gtwcas]=plm3evhsd30l34r2tj68fh9mss
+            [gtwcau]=31e7b509e16383e2c02a557c478ba3fe7cac843154c97ca5fbc77d69a578c253 [nls]=f7ubn1ltpc4p7amil7kefgj754
+            [igt]=kug92q3u7fqcg2t0di3e2cklio [bgt]=6bh6kok6g3v97ogr2d1s2g1srs [adac]=bo1ablitg2ecigfcdouq209vj0
+            [gt24e]=pdbbgsms5dmvdhh6i4rucnlplg [gtam]=eui5lon2nvcv1mbj1oj5cfle0c )
+          for k in "${!TMR[@]}"; do
+            curl -fsSL "https://calendar.google.com/calendar/ical/${TMR[$k]}%40group.calendar.google.com/public/basic.ics" -o feeds/tmr-$k.ics || rm -f feeds/tmr-$k.ics
+          done
+          ls -la feeds
+      - name: Build schedule.json
+        run: python update_schedule.py
+      - name: Commit
+        run: |
+          git config user.name "the-grid-bot"; git config user.email "bot@users.noreply.github.com"
+          git add schedule.json coverage.txt
+          git diff --cached --quiet || (git commit -m "Update schedule" && git push)
